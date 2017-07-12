@@ -4,17 +4,18 @@ echo -e '\e[1;32m### install dep pkg \e[m'
 sudo apt-get update
 sudo apt-get install -y cmake build-essential python-pip git python-dev libopenni-dev libopenni2-dev libvtk6-dev vtk6 libpcap-dev libflann-dev
 
-CUDACHK=`sudo find /usr/local/ -name "cuda" | grep -c cuda`
-
+LIBSNAME=~/sq_libs
 
 echo -e '\e[1;32m### git clone pcl-1.8 \e[m'
-mkdir lib
-cd lib
+mkdir -p $LIBSNAME
+cd $LIBSNAME
 git clone https://github.com/PointCloudLibrary/pcl.git pcl-1.8
 cd pcl-1.8
 git checkout -b pcl-1.8.0 refs/tags/pcl-1.8.0 
 mkdir build
 cd build
+
+CUDACHK=`sudo find /usr/local/ -name "cuda" | grep -c cuda`
 
 if [ $CUDACHK -ne 0 ] ; then
 	echo -e '\e[1;32m### With CUDA \e[m'
@@ -34,7 +35,7 @@ if [ $CUDACHK -ne 0 ] ; then
 	
 else
 	echo -e '\e[1;32m### No CUDA \e[m'
-	cmake ..
+	cmake .. -DCMAKE_BUILD_TYPE=Release
 fi
 
 MEMSIZE=`vmstat -s -S m| grep 'total memory' | grep -o [0-9]*`
